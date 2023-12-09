@@ -218,4 +218,6 @@ sudo apt remove ophcrack
 
 # upgrade all installed packages
 echo "installing updates"
+echo excluding PostgreSQL 12.2  
+sudo apt-mark hold PostgreSQL
 apt-get upgrade -y
