@@ -42,11 +42,11 @@
 #!/bin/bash
 #updates
 echo "getting updates"
-apt-get update
+sudo apt-get update
 
 #installing and enabling auditing
 echo "Installing auditing daemon"
-apt-get install auditing
+sudo apt-get install auditing
 echo "enabling auditing"
 auditctl -e 1 > /var/local/audit.log
 
@@ -150,7 +150,7 @@ clamscan -r /home
 if [ $sshYN == no ]
 then
 	ufw deny ssh
-	apt-get purge openssh-server -y -qq
+	sudo apt-get purge openssh-server -y -qq
 	printTime "SSH port has been denied on the firewall. Open-SSH has been removed."
 elif [ $sshYN == yes ]
 then
