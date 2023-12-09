@@ -202,7 +202,8 @@ echo Disable IPv6?
 read ipv6YN
 if [ $ipv6YN == yes ]
 then
-	
+	echo -e "\n\n# Disable IPv6\nnet.ipv6.conf.all.disable_ipv6 = 1\nnet.ipv6.conf.default.disable_ipv6 = 1\nnet.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+	sysctl -p >> /dev/null
 	printTime "IPv6 has been disabled."
 fi
 
