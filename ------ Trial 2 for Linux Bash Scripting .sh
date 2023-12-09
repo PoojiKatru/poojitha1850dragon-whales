@@ -1,9 +1,45 @@
 -----Trial 1 for Linux Bash Scripting -----
+#TableofContents
+#updates
+#installing and enabling auditing
+#enabling firewall
+#make log dir
+#create/clear log files
+# Add additional instructions to log file
+# install libpam-cracklib to set password details up - fix
+# Pam config - fix 
+# password aging policy - fix
+# password lockout #add line of code to enable it 
+# SSH daemon config
+
+# Lists all cronjobs & output to /var/local/cronjoblist.log - fix
+# List all connections, open or listening
+# Install clam antivirus - fix this
+# Update clam signatures - fix
+# Run a full scan of the "/home" directory
+#ssh
+#insecure permissions on shadow file
+#SSHD service installed + started
+
+#checking for the services that are installed
+#IPv6 disable - fix
+# prohibited software
+#install updates from imoprtant security updates - do this
+#stystem automatically checks for updates daily
+
+# upgrade all installed packages
 
 
+
+
+
+
+
+#SERVICES - ADD DEM
+#Delete John the Ripper
+#shadow file - insecure permissions
 
 #!/bin/bash
-#put upgrades in the back
 #updates
 echo "getting updates"
 apt-get update
@@ -14,18 +50,13 @@ apt-get install auditing
 echo "enabling auditing"
 auditctl -e 1 > /var/local/audit.log
 
-
-# upgrade all installed packages
-echo "installing updates"
-apt-get upgrade -y
-
-# enable firewall
+#enable firewall
 echo "enabling UFW"
 ufw enable
 
 # make log dir
-echo "creating /var/local"
-mkdir /var/local/
+echo "creating /var/local" 
+mkdir /var/local/ #already exists
 
 # Create/clear log files
 echo "creating log files in /var/local"
@@ -43,7 +74,9 @@ echo "more password stuff @ https://www.cyberciti.biz/tips/linux-check-passwords
 
 # install libpam-cracklib to set password details up
 echo "installing libpam-cracklib for passwords"
-apt-get install libpam-cracklib -y
+sudo apt-get update -y
+sudo apt-get install -y libpam-modules
+
 
 # Pam config
 echo "changing PAM config"
@@ -81,9 +114,12 @@ cp /etc/ssh/sshd_config /etc/ssh/sshd_config.old
 mv /var/local/temp1.txt /etc/ssh/sshd_config
 
 # Find all video files
+#open up the log
+#find media files in only home directories
+
 echo "Finding Media Files"
 echo "||||Video Files||||" >> /var/local/mediafiles.log
-locate *.mkv *.webm *.flv *.vob *.ogv *.drc *.gifv *.mng *.avi$ *.mov *.qt *.wmv *.yuv *.rm *.rmvb *.asf *.amv *.mp4$ *.m4v *.mp *.m?v *.svi *.3gp *.flv *.f4v >> /var/local/mediafiles.log
+locate *.mkv *.webm *.flv *.vob *.ogv *.drc *.gifv *.mng *.avi *.mov *.qt *.wmv *.yuv *.rm *.rmvb *.asf *.amv *.mp4 *.m4v *.mp *.m?v *.svi *.3gp *.flv *.f4v >> /var/local/mediafiles.log
 echo "||||Audo Files||||" >> /var/local/mediafiles.log
 locate *.3ga *.aac *.aiff *.amr *.ape *.arf *.asf *.asx *.cda *.dvf *.flac *.gp4 *.gp5 *.gpx *.logic *.m4a *.m4b *.m4p *.midi *.mp3 *.pcm *.rec *.snd *.sng *.uax *.wav *.wma *.wpl *.zab >> /var/local/mediafiles.log
 
@@ -97,7 +133,9 @@ ss -an4 > /var/local/netstat.log
 
 # Install clam antivirus
 echo "installing clam antivirus"
-apt-get install clamav -y
+sudo apt-get install clamav 
+sudo freshclam
+
 
 # Update clam signatures
 echo "updating clam signatures"
@@ -131,3 +169,52 @@ else
 	echo Response not recognized.
 fi
 printTime "SSH is complete."
+
+#insecure permissions on shadow file
+echo what is the permission on the shadow file?
+sudo ls -l /etc/shadow
+read shadowfileYN
+if [ $shadowfileYN == yes ]
+	then 
+	echo fixing the problem
+	chmod 640 /etc/shadow
+fi
+
+#SSHD service installed + started
+echo installing openssh-server
+sudo apt-get install openssh-server
+echo opening the openssh-server
+sudo systemctl start sshd
+
+#checking for the services that are installed
+echo checking services that are active
+systemctl list-units --type=service  --state=active
+
+echo Disable nginx?
+read nginxYN
+if [ $nginxYN == yes ]
+then
+	sudo systemctl stop nginx
+	sudo systemctl disable nginx
+fi
+#IPv6 disable
+echo Disable IPv6?
+read ipv6YN
+if [ $ipv6YN == yes ]
+then
+	
+	printTime "IPv6 has been disabled."
+fi
+
+# prohibited software
+echo removing wireshark
+sudo apt remove wireshark
+echo removing ophcrack
+sudo apt remove ophcrack
+
+
+
+
+# upgrade all installed packages
+echo "installing updates"
+apt-get upgrade -y
